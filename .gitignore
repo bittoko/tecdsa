@@ -1,0 +1,6 @@
+.dfx
+.vessel
+*.wasm
+docs/
+
+.mops

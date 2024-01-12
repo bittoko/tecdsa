@@ -1,0 +1,9 @@
+[dependencies]
+base = "0.10.2"
+sha2 = "0.0.4"
+
+[dev-dependencies]
+test = "1.2.0"
+
+[toolchain]
+moc = "0.10.3"
