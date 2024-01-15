@@ -1,24 +1,19 @@
-import Agent "../Agent";
-import Utils "Utils";
 import { compare = compareBlob } "mo:base/Blob";
 import { fromText = principalFromText } "mo:base/Principal";
+import Utils "utils";
+import T "types";
 
 module {
 
-  public type Seed = Blob;
-  public type KeyId = Agent.KeyId;
-  public type PublicKey = Agent.PublicKey;
-  public type AsyncReturn<T> = Agent.AsyncReturn<T>;
-  public type Agent = Agent.Agent;
-  public type SeedPhrase = [Text];
+  public type State = (T.Seed, T.KeyId, T.PublicKey);
 
-  public type State = (Seed, KeyId, PublicKey);
+  public type InitParams = {client: T.Client; key_id: T.KeyId};
 
-  public func init(agent: Agent, keyId: KeyId): async* AsyncReturn<(State, SeedPhrase)> {
-    let phrase : SeedPhrase = await* Utils.generateSeedPhrase();
+  public func init(params: InitParams): async* T.AsyncReturn<(State, T.SeedPhrase)> {
+    let phrase : T.SeedPhrase = await* Utils.generateSeedPhrase();
     let seed : Blob = Utils.hashSeedPhrase( phrase );
-    let params: Agent.Params = {key_id = keyId; canister_id = null; derivation_path = [ seed ]};
-    switch( await* agent.request_public_key( params ) ){
+    let client_params: T.Params = {key_id = params.key_id; canister_id = null; derivation_path = [ seed ]};
+    switch( await* params.client.request_public_key( client_params ) ){
       case( #ok pk ) #ok((seed, keyId, pk), phrase);
       case( #err txt ) return #err( txt );
     };

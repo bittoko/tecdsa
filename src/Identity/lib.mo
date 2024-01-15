@@ -1,30 +1,16 @@
-import C "Class";
-import S "State";
-import U "Utils";
-import A "../Agent";
-import Const "Const";
+import C "class";
+import S "state";
+import U "utils";
+import Const "const";
+import T "types";
 
 module {
-
-  public type KeyId = S.KeyId;
   
-  public type Agent = A.Agent;
-  
-  public type Message = A.Message;
-  
-  public type Signature = A.Signature;
-  
-  public type PublicKey = S.PublicKey;
-  
-  public type SeedPhrase = S.SeedPhrase;
-  
-  public type AsyncReturn<T> = C.AsyncReturn<T>;
-
-  public type AddCyclesFn = C.AddCyclesFn;
-  
-  public let { Identity } = C;
+  public let State = S;
 
   public type State = S.State;
+
+  public let { Identity } = C;
 
   public type Identity = C.Identity;
 
@@ -34,6 +20,18 @@ module {
 
   public let { BIP39_WORD_COUNT; BIP39_WORD_LIST } = Const;
 
-  public module State = { public let { init; compare } = S };
-
+  public type KeyId = T.KeyId;
+  
+  public type Client = T.Client;
+  
+  public type Message = T.Message;
+  
+  public type Signature = T.Signature;
+  
+  public type PublicKey = T.PublicKey;
+  
+  public type SeedPhrase = T.SeedPhrase;
+  
+  public type AsyncReturn<T> = T.AsyncReturn<T>;
+  
 };

@@ -1,75 +1,44 @@
 import Manager "../Manager";
 import Identity "../Identity";
-import Agent "../Agent";
-import State "State";
+import Client "../Client";
+import S "state";
 
 module {
 
-  public type KeyId = Agent.KeyId;
+  let { Identity } = Identity;
+  let { Manager } = Manager;
+  let { Client } = Client;
 
-  public type State = State.State;
-  
-  public type SlotId = Manager.SlotId;
+  public class Keystore(state: S.State) = {
 
-  public type Message = Agent.Message;
+    let client = client( state.client_state );
 
-  public type Signature = Agent.Signature;
-
-  public type Identity = Identity.Identity;
-
-  public type PublicKey = Identity.PublicKey;
-
-  public type SeedPhrase = Identity.SeedPhrase;
-
-  public type AsyncReturn<T> = Agent.AsyncReturn<T>;
-
-  public type CyclesInterface = {
-    reserve: (Nat64) -> ?Nat;
-    claim: (Nat) -> ?Blob;
-    log: (Blob) -> ();
-  };
-
-  public class Keystore(state: State, cycles: CyclesInterface) = {
-
-    let agent = Agent.Agent(state.ecdsa_agent_state);
-
-    let manager = Manager.Manager(state.ecdsa_manager_state);
+    let manager = Manager( state.manager_state );
 
     public let find_slot_of_seed = manager.find;
 
-    public func slot_key_id(slotId: SlotId): KeyId = Identity.Identity(manager.get(slotId), agent).key_id;
+    public let calculate_fee = client.calculate_fee;
 
-    public func slot_principal(slotId: SlotId): Principal = Identity.Identity(manager.get(slotId), agent).principal;
+    public func slot_key_id(slotId: T.SlotId): T.KeyId = Identity(manager.get(slotId), client).key_id;
 
-    public func slot_public_key(slotId: SlotId): PublicKey = Identity.Identity(manager.get(slotId), agent).public_key;
+    public func slot_principal(slotId: T.SlotId): T.Principal = Identity(manager.get(slotId), client).principal;
 
-    public func slot_identity(slotId: SlotId): Identity = Identity.Identity(manager.get(slotId), agent);
+    public func slot_public_key(slotId: T.SlotId): T.PublicKey = Identity(manager.get(slotId), client).public_key;
 
-    public func fill_next_slot(masterKey: KeyId): async* AsyncReturn<(SlotId, SeedPhrase)> {
-      await* manager.new_identity(agent, masterKey);
+    public func slot_identity(slotId: T.SlotId): T.Identity = Identity(manager.get(slotId), client);
+
+    public func fill_next_slot(masterKey: T.KeyId): async* T.AsyncReturn<(T.SlotId, T.SeedPhrase)> {
+      await* manager.new_identity({client = client; key_id = masterKey});
     };
 
-    public func is_owner_of_slot(slotId: SlotId, seed: SeedPhrase): Bool {
-      let identity = Identity.Identity(manager.get(slotId), agent);
-      identity.is_owner_seed( seed )
+    public func is_owner_of_slot(phrase: T.SeedPhrase, slotId: T.SlotId) : Bool {
+      let identity = Identity(manager.get(slotId), client);
+      identity.is_owner_seed( phrase )
     };
     
-    public func sign_with_slot(slotId: SlotId, msg: Message): async* AsyncReturn<Signature> {
-      var logEntry: ?Blob = null;
-      let identity = Identity.Identity(manager.get( slotId ), agent);
-      let fee = agent.resolve_fee( identity.key_id );
-      let ?reservation = cycles.reserve( fee ) else { return #err("Insufficient Cycles") };
-      let addCycles = func(x: Nat64): Bool {
-        if ( x <= fee ) {logEntry := cycles.claim(reservation); true } else false 
-      };
-      switch( await* identity.sign(msg, addCycles) ){
-        case( #err txt ) return #err( txt );
-        case( #ok sig ){
-          let ?entry = logEntry else { return #ok(sig) };
-          cycles.log(entry);
-          #ok(sig)
-        };
-      }
+    public func sign_with_slot(slotId: T.SlotId, msg: T.Message): async* T.AsyncReturn<T.Signature> {
+      let identity = Identity(manager.get( slotId ), client);
+      await* identity.sign( msg )
     };
 
   };

@@ -1,12 +1,31 @@
-import C "Const";
+import { Fees } "../../../utilities/src";
 
 module {
-  
-  public type Fee = Nat64;
+
+  public type Fee = Fees.Fee;
+
+  public type Message = Blob;
+
+  public type Signature = Blob;
+
+  public type PublicKey = Blob;
 
   public type Curve = { #secp256k1 };
 
   public type MasterKey = {#dfx_test_key; #test_key_1; #key_1};
+
+  public type KeyId = {name: MasterKey; curve: Curve};
+
+  public type Params = {key_id: KeyId; derivation_path: [Blob]; canister_id: ?Principal};
+
+  public type AsyncReturn<T> = { #ok: T; #err: AsyncError };
+
+  public type AsyncError = {
+    #fee_not_defined: Text;
+    #trapped: Text;
+  };
+
+  public type ReturnFee = Fees.Return;
 
   public type IC = actor {
     ecdsa_public_key : ({
@@ -21,12 +40,4 @@ module {
     }) -> async ({ signature : Blob });
   };
 
-  public func actor_from_canister_id(id: Text): IC = actor(id);
-
-  public func get_key_name_and_fee(k: MasterKey): (Text, Fee) = switch(k){
-    case( #dfx_test_key ) ("dfx_test_key", C.FEE_TEST_KEY_1);
-    case( #test_key_1 ) ("test_key_1", C.FEE_TEST_KEY_1);
-    case( #key_1 )( "key_1", C.FEE_KEY_1);
-  };
-
-};
+}

@@ -1,36 +1,32 @@
-import C "Class";
-import S "State";
-import A "../Agent";
-import I "../Identity";
-import M "../Manager";
+import C "class";
+import S "state";
+import T "types";
 
 module {
 
-  public let { Keystore } = C;
-
+  public let State = S;
+  
   public type State = S.State;
 
-  public type KeyId = A.KeyId;
-  
-  public type SlotId = M.SlotId;
-
-  public type Message = A.Message;
+  public let { Keystore } = C;
 
   public type Keystore = C.Keystore;
 
-  public type Signature = A.Signature;
+  public type KeyId = T.KeyId;
+  
+  public type SlotId = T.SlotId;
 
-  public type Identity = I.Identity;
+  public type Message = T.Message;
 
-  public type PublicKey = I.PublicKey;
+  public type Signature = T.Signature;
 
-  public type SeedPhrase = I.SeedPhrase;
+  public type Identity = T.Identity;
 
-  public type AsyncReturn<T> = A.AsyncReturn<T>;
+  public type PublicKey = T.PublicKey;
 
-  public type CyclesInterface = C.CyclesInterface;
+  public type SeedPhrase = T.SeedPhrase;
 
-  public module State = { public let { init } = S };
+  public type AsyncReturn<T> = T.AsyncReturn<T>;
 
 
 };

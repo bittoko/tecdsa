@@ -4,7 +4,7 @@ import { Buffer }  "mo:base/Buffer";
 import { encodeUtf8 } "mo:base/Text";
 import { rangeFrom; blob } "mo:base/Random";
 import { init; freeze } "mo:base/Array";
-import { BIP39_WORD_LIST; BIP39_WORD_COUNT } "Const";
+import { BIP39_WORD_LIST; BIP39_WORD_COUNT } "const";
 import { fromBlob = principalFromBlob } "mo:base/Principal";
 import { tabulate } "mo:base/Array";
 import {
