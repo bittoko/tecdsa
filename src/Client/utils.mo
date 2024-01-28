@@ -17,21 +17,36 @@ module {
 
   let p_blob : Blob = "\FF\FF\FF\FF\FF\FF\FF\FF\FF\FF\FF\FF\FF\FF\FF\FF\FF\FF\FF\FF\FF\FF\FF\FF\FF\FF\FF\FE\FF\FF\FC\2F";
 
-  public func decompress_public_key(blob: Blob): Blob {   
-    let compressed : [Nat8] = Blob.toArray( blob ); 
-    let p : Nat = decodeNat(p_blob.vals(), #unsignedLEB128);
-    let x : Nat = decodeNat(compressed.vals(), #unsignedLEB128);
-    let prefix : Nat8 = compressed[0];
-    let y_square : Nat = (pow_mod(x, 3, p) + 7) % p;
-    let y_square_square_root : Nat = pow_mod(y_square, (p+1)/4, p);
-    let is_odd : Bool = y_square_square_root % 2 == 1;
-    let is_even : Bool = not is_odd;
-    if ( (prefix == 0x02 and is_odd) or (prefix == 0x03 and is_even) ){
-      
-    }
+  public func decompressPublicKey(compressedPublicKey: Blob): async {decompressedPublicKey: Blob; x: Text; y: Text } {
+    let p_hex : Text = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F";
+    let compressedPublicKeyHex : Text = Hex.encode(Blob.toArray(compressedPublicKey));
+    let compressedPublicKeyHexArray : [Char] = Text.toArray(compressedPublicKeyHex);
+    let prefix: Text = Hex.convertCharArrayToText([compressedPublicKeyHexArray[0], compressedPublicKeyHexArray[1]]);
+    let x_hex: Text = Hex.convertCharArrayToText(Array.subArray<Char>(compressedPublicKeyHexArray, 2, compressedPublicKeyHexArray.size() - 2));
+    let xAsInt: Int = await Hex.toNat(x_hex);
+    let pAsInt: Nat = await Hex.toNat(p_hex);
+    let pow_1 = xAsInt **3;
+    let rem_1 = NatX.modulo(pow_1, pAsInt);
+    let sum_1 = rem_1 + 7;
+    let y_square: Int = NatX.modulo(sum_1, pAsInt);
+    let sum_2 = pAsInt + 1;
+    let quo_1 = Int.div(sum_2,4);
+    let y_square_square_root: Int = NatX.pow_mod(Int.abs(y_square), Int.abs(quo_1), pAsInt);
+    var y : Int = y_square_square_root;
+    if(
+        (prefix == "02" and NatX.modulo(y_square_square_root, 2) == 1) or 
+        (prefix == "03" and NatX.modulo(y_square_square_root, 2) == 0)
+    ){ y := NatX.modulo(-1 * y_square_square_root,  pAsInt) };
+    let y_hex = Hex.padHex("0", Hex.toHex(Int.abs(y)), 64);
+    let prefixNat8Array: [Nat8] = [0x04];
+    let xNat8Array: [Nat8] = Hex.decode(x_hex);
+    let yNat8Array: [Nat8] = Hex.decode(y_hex);
+    let decompressedPublicKeyNat8Array: [Nat8] = Array.append(prefixNat8Array,xNat8Array );
+    let decompressedPublicKeyNat8Array_: [Nat8] = Array.append(decompressedPublicKeyNat8Array, yNat8Array);
+    { decompressedPublicKey = Blob.fromArray(decompressedPublicKeyNat8Array_); x = x_hex; y = y_hex };
   };
 
-  func pow_mod(base: Nat, exponent: Nat, modulus: Nat ) : Nat {
+  public func pow_mod(base: Nat, exponent: Nat, modulus: Nat ) : Nat {
     var result: Nat = 1;
     var base_ = base;
     var exponent_ = exponent;
@@ -43,6 +58,12 @@ module {
       base_ := (base_ * base_) % modulus
     };
     return result;
+  };
+
+  public func modulo(num: Int, modulus:Nat): Nat {
+    var result = num % modulus;
+    if(result < 0) result += modulus;
+    return Int.abs(result);
   };
 
 // import binascii
