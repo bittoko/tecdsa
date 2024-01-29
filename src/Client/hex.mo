@@ -36,6 +36,13 @@ public func pow_mod(base: Nat, exponent: Nat, modulus: Nat ) : Nat {
     return Int.abs(result);
   };
 
+  private let base : Nat8 = 0x10; 
+
+  private let symbols = [
+      '0', '1', '2', '3', '4', '5', '6', '7',
+      '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
+  ];
+
   public func encode(array : [Nat8]) : Text {
     func nat8ToText(u8: Nat8) : Text {
       let c1 = symbols[Nat8.toNat((u8/base))];

@@ -1,4 +1,5 @@
 import { decodeNat } "mo:xtended-numbers/NatX";
+import Hex "hex";
 import Nat "mo:base/Nat";
 import Blob "mo:base/Blob";
 import Buffer "mo:base/Buffer";
