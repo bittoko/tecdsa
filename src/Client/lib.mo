@@ -6,15 +6,17 @@ import Const "const";
 
 module {
 
+  public type Client = C.Client;
+
   public let { Client } = C;
 
-  public let { FEE_TEST_KEY_1; FEE_KEY_1 } = Const;
+  public let State = S;
 
-  public module State = { public let { init } = S };
+  public let { FEE_TEST_KEY_1; FEE_KEY_1; FEE_DFX_TEST_KEY } = Const;
   
-  public type IC = T.IC;
+  public let { ID_TEST_KEY_1; ID_KEY_1; ID_DFX_TEST_KEY } = Const;
 
-  public type Client = C.Client;
+  public type IC = T.IC;
 
   public type State = S.State;
 

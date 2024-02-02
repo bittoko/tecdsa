@@ -14,7 +14,7 @@ module {
     let seed : Blob = Utils.hashSeedPhrase( phrase );
     let client_params: T.Params = {key_id = params.key_id; canister_id = null; derivation_path = [ seed ]};
     switch( await* params.client.request_public_key( client_params ) ){
-      case( #ok pk ) #ok((seed, keyId, pk), phrase);
+      case( #ok pk ) #ok((seed, client_params.key_id, pk), phrase);
       case( #err txt ) return #err( txt );
     };
   };

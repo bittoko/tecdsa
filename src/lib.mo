@@ -7,6 +7,8 @@ module {
 
   ///
   ///
+  public type Client = C.Client;
+  
   public let Client = C;
 
   public let Keystore = K;
