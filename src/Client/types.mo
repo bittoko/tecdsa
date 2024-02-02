@@ -1,4 +1,4 @@
-import { Fees } "../../../utilities/src";
+import { Fees } "mo:utilities";
 
 module {
 

@@ -2,7 +2,7 @@ import { fromArray = blobFromArray } "mo:base/Blob";
 import { resolve_keyname; decompress } "utils";
 import Cycles "mo:base/ExperimentalCycles";
 import { tabulate } "mo:base/Array";
-import { Fees } "../../../utilities/src";
+import { Fees } "mo:utilities";
 import Sha256 "mo:sha2/Sha256";
 import Nat64 "mo:base/Nat64";
 import Error "mo:base/Error";

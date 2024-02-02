@@ -7,3 +7,4 @@ test("simple test", func() {
 test("test my number", func() {
 	assert 1 > 0;
 });
+

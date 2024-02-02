@@ -29,13 +29,14 @@ module {
 
   public func hashSeedPhrase(seed: [Text]): Blob {
     var next_word : Nat = 1;
+    let word_count : Nat = seed.size();
     var bytes: Iter<Nat8> = encodeUtf8(seed[0]).vals();
     let hash: Blob = sha256FromIter(#sha256, object {
       public func next(): ?Nat8 {
         switch( bytes.next() ){
           case( ?byte ) ?byte;
           case null {
-            if ( next_word >= BIP39_WORD_COUNT ) null
+            if ( next_word >= word_count ) null
             else {
               bytes := encodeUtf8(seed[next_word]).vals();
               let ?byte = bytes.next() else { trap("ECDSA.Identity.Utils.hashSeed") };
