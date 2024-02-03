@@ -1,32 +1,42 @@
+import { toArray = blobToArray; fromArray = blobFromArray } "mo:base/Blob";
+import { KeyId; PublicKey } "../Client";
+import { tabulate } "mo:base/Array";
+import { hashSeedPhrase } "utils";
+import { trap } "mo:base/Debug";
+import { STATE_SIZE } "const";
 import S "state";
 import T "types";
-import { hashSeedPhrase; principalOfPublicKey } "utils";
-import { fromBlob = principalFromBlob } "mo:base/Principal";
 
 module {
 
   public class Identity(state: S.State, client: T.Client) = {
+  
+    if ( state.size() != STATE_SIZE ) trap("mo:tecdsa/identity/class: line 16");
 
-    public let key_id: T.KeyId = state.1;
+    public let (key_id, public_key, derivation_path) = do {
+      let bytes : [Nat8] = blobToArray( state );
+      let derivation_path : [Blob] = [blobFromArray( tabulate<Nat8>(32, func(i) = bytes[i+90]) )];
+      let public_key : T.PublicKey = tabulate<Nat8>(88, func(i) = bytes[i+2]);
+      let key_id : T.KeyId = switch( KeyId.fromTag((bytes[0], bytes[1])) ){
+        case null trap("mo:tecdsa/identity/class: line 19");
+        case( ?key_id ) key_id
+      };
+      (key_id, public_key, derivation_path)
+    };
 
-    public let public_key: T.PublicKey = state.2;
-
-    public let principal: Principal = principalOfPublicKey(state.2);
-
-    public let calculate_fee = client.calculate_fee;
-
-    public func is_owner_seed(seed: T.SeedPhrase): Bool {
-      let hash: Blob = hashSeedPhrase( seed );
-      hash == state.0;
+    public func getPrincipal() : Principal = PublicKey.toPrincipal( public_key );
+    
+    public func isOwnerSeedPhrase(phrase: T.SeedPhrase): Bool {
+      let hash : Blob = hashSeedPhrase( phrase );
+      hash == derivation_path[0]
     };
 
     public func sign(msg: T.Message): async* T.AsyncReturn<T.Signature>{
-      let params : T.Params = {
+      await* client.request_signature(msg, {
+        derivation_path = derivation_path;
         canister_id = null;
-        key_id = state.1;
-        derivation_path = [ state.0 ];
-      };
-      await* client.request_signature(msg, params)
+        key_id = key_id;
+      })
     };
 
   };

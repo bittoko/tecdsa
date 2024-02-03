@@ -18,16 +18,11 @@ module {
     public func new_identity(params: InitParams): async* T.AsyncReturn<(T.SlotId, T.SeedPhrase)> {
       switch( await* Identity.State.init( params ) ){
         case( #err txt ) #err( txt );
-        case( #ok (state, seed) ){
+        case( #ok (seed, state) ){
           let slot_id: T.SlotId = enumeration.add(state);
           #ok( (slot_id, seed) )
         };
       }
-    };
-
-    // comparison is based on hashed seed values;
-    public func find(seed: T.SeedPhrase): ?T.SlotId {
-      enumeration.lookup( (Identity.hashSeedPhrase( seed ), {name = #dfx_test_key; curve = #secp256k1}, "") );
     };
 
   };

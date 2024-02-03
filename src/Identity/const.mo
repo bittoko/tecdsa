@@ -1,5 +1,7 @@
 module {
 
+  public let STATE_SIZE: Nat = 122;
+
   public let BIP39_WORD_COUNT: Nat = 2048;
 
   public let BIP39_WORD_LIST: [Text] = [

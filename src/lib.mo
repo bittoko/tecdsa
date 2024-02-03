@@ -7,12 +7,14 @@ module {
 
   ///
   ///
-  public type Client = C.Client;
-  
   public let Client = C;
 
   public let Keystore = K;
 
+  public let { SECP256K1 } = C;
+
+  public type Client = C.Client;
+  
   public module Identity = {
     
     public type State = I.State;
@@ -26,11 +28,5 @@ module {
     public let Manager = M;
 
   };
-
-  ///
-  ///
-  public let { principalOfPublicKey } = I;
-
-  public let { generateSeedPhrase; hashSeedPhrase } = I;
 
 };

@@ -1,29 +1,40 @@
-import { compare = compareBlob } "mo:base/Blob";
+import { compare = compareBlob; toArray = blobToArray; fromArray = blobFromArray } "mo:base/Blob";
 import { fromText = principalFromText } "mo:base/Principal";
+import { tabulate } "mo:base/Array";
 import { print } "mo:base/Debug";
+import { STATE_SIZE } "const";
+import { KeyId } "../Client";
 import Utils "utils";
 import T "types";
 
 module {
 
-  public type State = (T.Seed, T.KeyId, T.PublicKey);
+  public type State = Blob;
 
   public type InitParams = {client: T.Client; key_id: T.KeyId};
 
-  public func init(params: InitParams): async* T.AsyncReturn<(State, T.SeedPhrase)> {
-    print("0");
+  public let compare = compareBlob;
+
+  public func init(params: InitParams): async* T.AsyncReturn<(T.SeedPhrase, State)> {
+    let ?tag = KeyId.toTag( params.key_id ) else { return #err(#other("mo:tecdsa/identity/state: line 15")) };
     let phrase : T.SeedPhrase = await* Utils.generateSeedPhrase();
-    print("1");
     let seed : Blob = Utils.hashSeedPhrase( phrase );
-    print("2");
     let client_params: T.Params = {key_id = params.key_id; canister_id = null; derivation_path = [ seed ]};
-    print("3");
     switch( await* params.client.request_public_key( client_params ) ){
-      case( #ok pk ) #ok((seed, client_params.key_id, pk), phrase);
-      case( #err txt ) return #err( txt );
+      case( #err msg ) return #err( msg );
+      case( #ok pk ){
+        let seed_bytes : [Nat8] = blobToArray( seed );
+        print(debug_show(seed.size() + pk.size() + 2));
+        #ok(phrase, blobFromArray(
+          tabulate<Nat8>(STATE_SIZE, func(i): Nat8 {
+            if ( i == 0 ) tag.0
+            else if ( i == 1 ) tag.1
+            else if ( i < 90 ) pk[i-2]
+            else seed_bytes[i - 90]
+          })
+        ));
+      }
     };
   };
-
-  public func compare(x: State, y: State): {#less; #equal; #greater} = compareBlob(x.0, y.0);
 
 };

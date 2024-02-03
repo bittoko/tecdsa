@@ -1,24 +1,31 @@
 import C "class";
 import S "state";
-import U "utils";
 import T "types";
+import K "keyid";
+import PK "pk";
 import Const "const";
 
 module {
 
-  public type Client = C.Client;
+  public let State = S;
+
+  public type State = S.State;
 
   public let { Client } = C;
 
-  public let State = S;
+  public type Client = C.Client;
 
-  public let { FEE_TEST_KEY_1; FEE_KEY_1; FEE_DFX_TEST_KEY } = Const;
+  public let KeyId = K;
+
+  public type KeyId = T.KeyId;
+
+  public let PublicKey = PK;
   
-  public let { ID_TEST_KEY_1; ID_KEY_1; ID_DFX_TEST_KEY } = Const;
+  public type PublicKey = T.PublicKey;
+
+  public let { SECP256K1 } = Const;
 
   public type IC = T.IC;
-
-  public type State = S.State;
 
   public type Fee = T.Fee;
 
@@ -26,13 +33,7 @@ module {
 
   public type Signature = T.Signature;
 
-  public type PublicKey = T.PublicKey;
-
   public type Curve = T.Curve;
-
-  public type MasterKey = T.MasterKey;
-
-  public type KeyId = T.KeyId;
 
   public type Params = T.Params;
 

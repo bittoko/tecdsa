@@ -12,13 +12,11 @@ module {
 
     let manager = M.Manager( state.manager_state );
 
-    public let find_slot_of_seed = manager.find;
-
     public let calculate_fee = client.calculate_fee;
 
     public func slot_key_id(slotId: T.SlotId): T.KeyId = I.Identity(manager.get(slotId), client).key_id;
 
-    public func slot_principal(slotId: T.SlotId): Principal = I.Identity(manager.get(slotId), client).principal;
+    public func slot_principal(slotId: T.SlotId): Principal = I.Identity(manager.get(slotId), client).getPrincipal();
 
     public func slot_public_key(slotId: T.SlotId): T.PublicKey = I. Identity(manager.get(slotId), client).public_key;
 
@@ -30,7 +28,7 @@ module {
 
     public func is_owner_of_slot(phrase: T.SeedPhrase, slotId: T.SlotId) : Bool {
       let identity = I.Identity(manager.get(slotId), client);
-      identity.is_owner_seed( phrase )
+      identity.isOwnerSeedPhrase( phrase )
     };
     
     public func sign_with_slot(slotId: T.SlotId, msg: T.Message): async* T.AsyncReturn<T.Signature> {

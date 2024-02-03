@@ -3,7 +3,7 @@ import Utils "mo:utilities";
 
 module {
 
-  public let { FEE_DFX_TEST_KEY = FEE_TEST_KEY; ID_DFX_TEST_KEY = ID_TEST_KEY } = ECDSA.Client;
+  public let { SECP256K1 } = ECDSA;
 
   public type State = {
     state: { #standby; #initialized };
@@ -14,7 +14,7 @@ module {
 
   public func init(): State {
     let common_nonce = Utils.Nonce.State.init();
-    let common_fees = Utils.Fees.State.init([(ID_TEST_KEY, FEE_TEST_KEY)]);
+    let common_fees = Utils.Fees.State.init([(SECP256K1.ID.DFX_TEST_KEY, SECP256K1.FEE.DFX_TEST_KEY)]);
     return {
       state = #standby;
       fee_state = common_fees;

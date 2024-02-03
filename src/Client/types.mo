@@ -8,13 +8,13 @@ module {
 
   public type Signature = Blob;
 
-  public type PublicKey = Blob;
+  public type PublicKey = [Nat8];
+
+  public type Tag = (Nat8, Nat8);
 
   public type Curve = { #secp256k1 };
 
-  public type MasterKey = {#dfx_test_key; #test_key_1; #key_1};
-
-  public type KeyId = {name: MasterKey; curve: Curve};
+  public type KeyId = {curve: Curve; name : Text};
 
   public type Params = {key_id: KeyId; derivation_path: [Blob]; canister_id: ?Principal};
 
@@ -23,6 +23,7 @@ module {
   public type AsyncError = {
     #fee_not_defined: Text;
     #trapped: Text;
+    #other: Text;
   };
 
   public type ReturnFee = Fees.Return;

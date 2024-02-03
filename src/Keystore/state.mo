@@ -1,11 +1,11 @@
 import Client "../Client";
-import Manager "../Manager";
+import Map "mo:map/Map";
 
 module {
 
   public type State = {
     var client_state: Client.State;
-    var manager_state: Manager.State;
+    var identities: Map.Map<Blob, Blob>
   };
 
   public type InitParams = Client.State.InitParams;

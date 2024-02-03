@@ -1,10 +1,13 @@
-import { Identity } "../../../src";
+import { Identity; SECP256K1 = { CURVE; ID = { DFX_TEST_KEY } }  } "../../../src";
+import { print } "mo:base/Debug";
 import { toBlob } "mo:base/Principal";
 import { encodeUtf8 } "mo:base/Text";
 import RT "Runtime";
 
 actor {
 
+  type Identity = Identity.State;
+  
   stable let config = RT.init();
   
   let runtime = RT.Runtime( config );
@@ -13,27 +16,38 @@ actor {
   let ecdsa_client = runtime.ecdsa_client();
   let fees = runtime.fees();
 
-  type Identity = Identity.State;
+  var identity: ?Identity = null;
 
-  public shared ({ caller }) func generate_new_identity(): async ?Identity {
-    switch( await* Identity.State.init({client=ecdsa_client; key_id={curve=#secp256k1; name=#dfx_test_key}}) ){
+  public shared func generate_new_identity(): async ?Identity {
+    switch( await* Identity.State.init({client=ecdsa_client; key_id={curve=CURVE; name=DFX_TEST_KEY}}) ){
+      case( #ok (_, i) ) { identity := ?i; identity };
       case( #err _ ) null;
-      case( #ok (i, _) ) ?i
     }
   };
 
-  public shared ({ caller }) func sign_message(): async Blob {
-    
-    let data = encodeUtf8("Hello world");
-    switch( await* ecdsa_client.request_signature(data, {
-      key_id = { curve = #secp256k1; name = #dfx_test_key };
-      derivation_path = [ toBlob(caller) ];
-      canister_id = null;
-    }) ){
-      case( #ok blob ) blob;
-      case _ ""
-    };
+  public shared query func get_principal(): async ?Principal {
+    let ?id = identity else { return null };
+    let _identity = Identity.Identity(id, ecdsa_client);
+    ?_identity.getPrincipal()
+  };
 
+  public shared query func get_public_key(): async ?[Nat8] {
+    let ?id = identity else { return null };
+    let _identity = Identity.Identity(id, ecdsa_client);
+    ?_identity.public_key
+  };
+
+  public shared func sign_message(): async ?Blob {
+    let ?id = identity else { return null };
+    let _identity = Identity.Identity(id, ecdsa_client);
+    let data = encodeUtf8("Hello world");
+    switch( await* _identity.sign( data ) ){
+      case( #ok signature ) ?signature;
+      case( #err msg ){
+        print(debug_show(#err(msg)));
+        null
+      }
+    }
   };
 
 };
