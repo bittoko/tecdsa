@@ -18,7 +18,7 @@ module {
 
   public let { generateSeedPhrase; hashSeedPhrase } = U;
 
-  public let { BIP39_WORD_COUNT; BIP39_WORD_LIST } = Const;
+  public let { STATE_SIZE; BIP39_WORD_COUNT; BIP39_WORD_LIST } = Const;
 
   public type KeyId = T.KeyId;
   

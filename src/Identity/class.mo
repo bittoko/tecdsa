@@ -24,9 +24,9 @@ module {
       (key_id, public_key, derivation_path)
     };
 
-    public func getPrincipal() : Principal = PublicKey.toPrincipal( public_key );
+    public func get_principal() : Principal = PublicKey.toPrincipal( public_key );
     
-    public func isOwnerSeedPhrase(phrase: T.SeedPhrase): Bool {
+    public func is_owner_seed_phrase(phrase: T.SeedPhrase): Bool {
       let hash : Blob = hashSeedPhrase( phrase );
       hash == derivation_path[0]
     };

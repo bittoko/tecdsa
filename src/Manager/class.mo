@@ -1,27 +1,31 @@
 import Identity "../Identity";
-import Enum "Enum";
-import S "state";
+import SB "mo:stable-buffer";
+import Client "../Client";
 import T "types";
 
 module {
 
-  type InitParams = Identity.State.InitParams;
+  type SlotParams = Identity.State.InitParams;
 
-  public class Manager(state: S.State) = {
+  public class Manager(state: T.State) = {
 
-    let enumeration = Enum.Enum<Identity.State>(state.ecdsa_identities, Identity.State.compare);
+    let client = Client.Client( state.client_state );
 
-    public let get = enumeration.get;
+    let buffer = SB.StableBuffer( state.buffer_state );
 
-    public let size = enumeration.size;
+    public let size = buffer.size;
 
-    public func new_identity(params: InitParams): async* T.AsyncReturn<(T.SlotId, T.SeedPhrase)> {
-      switch( await* Identity.State.init( params ) ){
+    public func get_slot(id: T.SlotId): T.Identity { Identity.Identity(buffer.get( id ), client) };
+
+    public func fill_next_slot(keyId : T.KeyId): async* T.AsyncReturn<(T.SlotId, T.SeedPhrase)> {
+      switch( await* Identity.State.init({client = client; key_id = keyId}) ){
         case( #err txt ) #err( txt );
         case( #ok (seed, state) ){
-          let slot_id: T.SlotId = enumeration.add(state);
-          #ok( (slot_id, seed) )
-        };
+          switch( buffer.add( state ) ){
+            case( #err _ ) #err(#other("mo:tecdsa/Manager: line 26"));
+            case( #ok slot_id ) #ok( (slot_id, seed) )
+          }
+        }
       }
     };
 

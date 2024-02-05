@@ -1,6 +1,6 @@
 module {
 
-  public let STATE_SIZE: Nat = 122;
+  public let STATE_SIZE: Nat64 = 122;
 
   public let BIP39_WORD_COUNT: Nat = 2048;
 

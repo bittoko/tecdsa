@@ -6,7 +6,7 @@ module {
 
   public let State = S;
   
-  public type State = S.State;
+  public type State = T.State;
 
   public let { Manager } = C;
 

@@ -1,5 +1,6 @@
 import { compare = compareBlob; toArray = blobToArray; fromArray = blobFromArray } "mo:base/Blob";
 import { fromText = principalFromText } "mo:base/Principal";
+import { toNat = nat64ToNat } "mo:base/Nat64";
 import { tabulate } "mo:base/Array";
 import { print } "mo:base/Debug";
 import { STATE_SIZE } "const";
@@ -26,7 +27,7 @@ module {
         let seed_bytes : [Nat8] = blobToArray( seed );
         print(debug_show(seed.size() + pk.size() + 2));
         #ok(phrase, blobFromArray(
-          tabulate<Nat8>(STATE_SIZE, func(i): Nat8 {
+          tabulate<Nat8>(nat64ToNat(STATE_SIZE), func(i): Nat8 {
             if ( i == 0 ) tag.0
             else if ( i == 1 ) tag.1
             else if ( i < 90 ) pk[i-2]

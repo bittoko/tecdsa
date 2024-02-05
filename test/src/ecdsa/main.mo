@@ -1,12 +1,3 @@
-# tecdsa
-
-## Install
-```
-mops add tecdsa
-```
-
-## Usage
-```motoko
 import { Manager; SECP256K1 = { CURVE; ID = { DFX_TEST_KEY } }  } "../../../src";
 import { toBlob } "mo:base/Principal";
 import { encodeUtf8 } "mo:base/Text";
@@ -49,4 +40,3 @@ actor {
   };
 
 };
-```
