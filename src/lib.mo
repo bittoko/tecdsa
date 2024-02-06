@@ -10,44 +10,21 @@ module {
 
   ///
   ///
+  public let Client = C;
+
   public type Client = C.Client;
 
-  public module Client = {
-
-    public let { Client; State } = C;
-
-    public type Client = C.Client;
-
-    public type State = C.State;
-
-  };
-
   ///
   ///
+
+  public let Identity = I;
+
   public type Identity = I.Identity;
 
-  public module Identity = {
-    
-    public let { Identity; State } = I;
-
-    public type Identity = I.Identity;
-
-    public type State = I.State;
-
-  };
-
   ///
   ///
+  public let Manager = M;
+
   public type Manager = M.Manager;
-
-  public module Manager = {
-
-    public let { Manager; State } = M;
-
-    public type Manager = M.Manager;
-
-    public type State = M.State;
-
-  };
 
 };
