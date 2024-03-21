@@ -13,11 +13,13 @@ import PK "pk";
 
 module {
 
-  public class Client(state: State.State) = {
+  public class Client(state_: State.State) = {
 
-    let fees = Fees.Fees( state.client_fees );
+    let state = State.unwrap( state_ );
 
-    let server : T.IC = actor( state.client_canister_id );
+    let fees = Fees.Fees( state.fees );
+
+    let server : T.IC = actor( state.canister_id );
 
     public func calculate_fee(key_id: T.KeyId): T.ReturnFee = fees.get( key_id.name );
 

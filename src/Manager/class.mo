@@ -1,14 +1,17 @@
 import Identity "../Identity";
 import SB "mo:stable-buffer";
 import Client "../Client";
+import State "state";
 import T "types";
 
 module {
 
   type SlotParams = Identity.State.InitParams;
 
-  public class Manager(state: T.State) = {
+  public class Manager(state_: State.State) = {
 
+    let state = State.unwrap( state_ );
+    
     let client = Client.Client( state.client_state );
 
     let buffer = SB.StableBuffer( state.buffer_state );

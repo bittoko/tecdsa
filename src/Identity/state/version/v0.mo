@@ -1,24 +1,19 @@
-import { compare = compareBlob; toArray = blobToArray; fromArray = blobFromArray } "mo:base/Blob";
-import { fromText = principalFromText } "mo:base/Principal";
-import { toNat = nat64ToNat } "mo:base/Nat64";
-import { tabulate } "mo:base/Array";
-import { print } "mo:base/Debug";
-import { STATE_SIZE } "const";
-import { KeyId } "../Client";
-import Utils "utils";
-import T "types";
+import T "../../types";
 
-module {
+module { 
+
+  public type Predecessors = { #null_ };
 
   public type State = Blob;
 
-  public type InitParams = {client: T.Client; key_id: T.KeyId};
-
-  public let compare = compareBlob;
+  public type InitParams =  {client: T.Client; key_id: T.KeyId; seed_phrase: ?T.SeedPhrase};
 
   public func init(params: InitParams): async* T.AsyncReturn<(T.SeedPhrase, State)> {
     let ?tag = KeyId.toTag( params.key_id ) else { return #err(#other("mo:tecdsa/identity/state: line 15")) };
-    let phrase : T.SeedPhrase = await* Utils.generateSeedPhrase();
+    let phrase : T.SeedPhrase = switch( params.seed_phrase ){
+      case null await* Utils.generateSeedPhrase();
+      case( ?sp ) sp;
+    };
     let seed : Blob = Utils.hashSeedPhrase( phrase );
     let client_params: T.Params = {key_id = params.key_id; canister_id = null; derivation_path = [ seed ]};
     switch( await* params.client.request_public_key( client_params ) ){
@@ -37,5 +32,4 @@ module {
       }
     };
   };
-
-};
+}

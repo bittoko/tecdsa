@@ -9,8 +9,10 @@ import T "types";
 
 module {
 
-  public class Identity(state: S.State, client: T.Client) = {
+  public class Identity(state_: S.State, client: T.Client) = {
   
+    let state = S.unwrap( state_ );
+    
     if ( state.size() != STATE_SIZE ) trap("mo:tecdsa/identity/class: line 16");
 
     public let (key_id, public_key, derivation_path) = do {
