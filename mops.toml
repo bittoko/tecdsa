@@ -1,6 +1,6 @@
 [package]
 name = "tecdsa"
-version = "0.1.0"
+version = "0.0.4"
 description = "Generate and manage tECDSA identities"
 repository = "https://github.com/bittoko/tecdsa"
 keywords = [
