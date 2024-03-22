@@ -38,7 +38,7 @@ module {
     let y : Int = if ( (prefix == 0x02 and not is_even ) or (prefix == 0x03 and is_even ) ) 
       Int.modulo(-1 * y_square_square_root, p) else y_square_square_root;
 
-    let (y_size, y_genFn) = Int.generator( y );
+    let (_, y_genFn) = Int.generator( y );
     tabulate<Nat8>(65, func(i): Nat8 {
       if ( i == 0 ) return 0x04;
       if ( i < 33 ) compressed_pk[i]

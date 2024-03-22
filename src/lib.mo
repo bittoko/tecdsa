@@ -1,6 +1,5 @@
 import C "Client";
 import I "Identity";
-import M "Manager";
 
 module {
 
@@ -20,11 +19,6 @@ module {
   public let Identity = I;
 
   public type Identity = I.Identity;
-
-  ///
-  ///
-  public let Manager = M;
-
-  public type Manager = M.Manager;
+  
 
 };

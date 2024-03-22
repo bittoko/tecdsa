@@ -31,7 +31,7 @@ module {
     var next_word : Nat = 1;
     let word_count : Nat = seed.size();
     var bytes: Iter<Nat8> = encodeUtf8(seed[0]).vals();
-    let hash: Blob = sha256FromIter(#sha256, object {
+    sha256FromIter(#sha256, object {
       public func next(): ?Nat8 {
         switch( bytes.next() ){
           case( ?byte ) ?byte;

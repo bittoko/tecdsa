@@ -5,6 +5,10 @@
 mops add tecdsa
 ```
 
+## Changelog
+-- Removes the Manager class
+-- Breaking change to State type and methods
+
 ## Usage
 ```motoko
 import { Manager; SECP256K1 = { CURVE; ID = { DFX_TEST_KEY } }  } "../../../src";

@@ -1,4 +1,5 @@
 import { toArray = blobToArray; fromArray = blobFromArray } "mo:base/Blob";
+import { toNat = nat64ToNat } "mo:base/Nat64";
 import { KeyId; PublicKey } "../Client";
 import { tabulate } "mo:base/Array";
 import { hashSeedPhrase } "utils";
@@ -13,7 +14,7 @@ module {
   
     let state = S.unwrap( state_ );
     
-    if ( state.size() != STATE_SIZE ) trap("mo:tecdsa/identity/class: line 16");
+    if ( state.size() != nat64ToNat( STATE_SIZE ) ) trap("mo:tecdsa/identity/class: line 16");
 
     public let (key_id, public_key, derivation_path) = do {
       let bytes : [Nat8] = blobToArray( state );

@@ -25,7 +25,7 @@ module {
 
     public func request_public_key(params: T.Params): async* T.AsyncReturn<T.PublicKey> {
       try {
-        let curve: T.Curve = params.key_id.curve;
+        //let curve: T.Curve = params.key_id.curve;
         let pre_string : [Nat8] = DER_PRESTRING;
         let { public_key } = await server.ecdsa_public_key({
           canister_id = params.canister_id;
@@ -50,7 +50,7 @@ module {
         switch( fees.get( params.key_id.name ) ){
           case( #err msg ) #err(msg);
           case( #ok fee ){
-            Cycles.add( Nat64.toNat(fee) );
+            Cycles.add<system>( Nat64.toNat(fee) );
             let { signature } = await server.sign_with_ecdsa({
               message_hash = hash;
               derivation_path = params.derivation_path;
