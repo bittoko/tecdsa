@@ -44,7 +44,7 @@ module {
       }
     };
 
-    public func request_signature(msg: T.Message, params: T.Params): async* T.AsyncReturn<T.Signature> {
+    public func request_signature<system>(msg: T.Message, params: T.Params): async* T.AsyncReturn<T.Signature> {
       try {
         let hash: Blob = Sha256.fromBlob(#sha256, msg);
         switch( fees.get( params.key_id.name ) ){
